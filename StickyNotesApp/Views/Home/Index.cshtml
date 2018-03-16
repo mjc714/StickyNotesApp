@@ -1,3 +1,50 @@
 ﻿@{
     ViewData["Title"] = "Home Page";
 }
+
+<div class="jumbotron">
+    <div class="container">
+        <h1 class="display-3">Sticky Notes!</h1>
+        <p></p>
+        @* Button trigger modal. *@
+        <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#noteModal">
+            Create a Note!
+        </button>
+        @* Modal *@
+        <div class="modal fade" id="noteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLongTitle">New Note</h5>
+                    </div>
+                    <form class="form-container">
+                        <div class="form-group">
+                            <label for="noteTitle">Note Title</label>
+                            <input type="text" class="form-control" id="noteTitle" placeholder="Enter title." />
+                        </div>
+                        <div class="form-group">
+                            <label for="description">Description</label>
+                            <input type="text" class="form-control" id="description" placeholder="Description." />
+                        </div>
+                        @*<div class="form-check">
+                                <label class="form-check-label" for="exampleCheck1">Check me out</label>
+                                <input type="checkbox" class="form-check-input" id="exampleCheck1" />
+                            </div>*@
+                        <div class="form-group">
+                            <label for="date">Expire Date</label>
+                            <input type="date" id="date" />
+                        </div>
+                        <div class="form-group">
+                            <label for="time">Time</label>
+                            <input type="time" id="time" />
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary" asp-controller="Todos" asp-action="Index">Submit</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
