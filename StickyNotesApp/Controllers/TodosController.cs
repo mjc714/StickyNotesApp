@@ -54,7 +54,7 @@ namespace StickyNotesApp.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID,OwnderID,Title,Description,IsDone,ExprireDate")] Todo todo)
+        public async Task<IActionResult> Create([Bind("ID,Title,Description,ExpireDate")] Todo todo)
         {
             if (ModelState.IsValid)
             {

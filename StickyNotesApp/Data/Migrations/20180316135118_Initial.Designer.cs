@@ -11,9 +11,10 @@ using System;
 namespace StickyNotesApp.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20180316135118_Initial")]
+    partial class Initial
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -186,15 +187,14 @@ namespace StickyNotesApp.Data.Migrations
 
                     b.Property<string>("Description");
 
-                    b.Property<DateTime?>("ExpireDate");
+                    b.Property<DateTime?>("ExprireDate");
 
                     b.Property<bool>("IsDone");
 
                     b.Property<string>("OwnderID");
 
                     b.Property<string>("Title")
-                        .IsRequired()
-                        .HasMaxLength(50);
+                        .IsRequired();
 
                     b.HasKey("ID");
 

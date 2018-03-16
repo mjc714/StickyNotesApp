@@ -12,6 +12,7 @@ namespace StickyNotesApp.Models
         public string OwnderID { get; set; }
 
         [Required]
+        [StringLength(50, MinimumLength = 1)]
         public string Title { get; set; }
 
         public string Description { get; set; }
@@ -21,6 +22,6 @@ namespace StickyNotesApp.Models
         [DataType(DataType.Date)]
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         [Display(Name = "Expire Date")]
-        public DateTime? ExprireDate { get; set; }
+        public DateTime? ExpireDate { get; set; }
     }
 }

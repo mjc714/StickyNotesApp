@@ -1,59 +1,108 @@
 ﻿@model IEnumerable<StickyNotesApp.Models.Todo>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Notes";
 }
 
-<h2>Index</h2>
+<h2>My Notes</h2>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-                <th>
-                    @Html.DisplayNameFor(model => model.OwnderID)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Title)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Description)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.IsDone)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.ExprireDate)
-                </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.OwnderID)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Title)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Description)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.IsDone)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ExprireDate)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.ID">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.ID">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.ID">Delete</a>
-            </td>
-        </tr>
+<hr />
+
+<form>
+    <button type="submit" class="btn btn-primary btn-sm" asp-action="Create">Add Note</button>
+</form>
+
+<hr />
+
+@foreach (var item in Model)
+{
+    <button id="modalButton" type="button" class="btn btn-primary" data-toggle="modal" data-target="#todo-details" data-itemID="@item.ID"
+            data-title="@item.Title" data-description="@item.Description" data-isDone="@item.IsDone" data-expDate="@item.ExpireDate">
+        @Html.DisplayFor(modelItem => item.Title)
+    </button>
+
+    <div class="modal fade" id="todo-details" tabindex="-1" role="dialog" aria-labelledby="todo-details-label" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="todo-details-label">Todo Details</h4>
+                </div>
+                <div class="modal-body">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.ID)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.Title)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.Description)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.IsDone)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.ExpireDate)
+                                </th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td id="itemID">
+                                    @*@Html.DisplayFor(modelItem => item.ID)*@
+                                </td>
+                                <td id="itemTitle">
+                                    @*@Html.DisplayFor(modelItem => item.Title)*@
+                                </td>
+                                <td id="itemDescription">
+                                    @*@Html.DisplayFor(modelItem => item.Description)*@
+                                </td>
+                                <td id="itemIsDone">
+                                    @*@Html.DisplayFor(modelItem => item.IsDone)*@
+                                </td>
+                                <td id="itemExpireDate">
+                                    @*@Html.DisplayFor(modelItem => item.ExprireDate)*@
+                                </td>
+                                <td>
+                                    @*<a asp-action="Edit" asp-route-id="@item.ID">Edit</a>*@
+                                    @*<a asp-action="Details" asp-route-id="@item.ID">Details</a>*@
+                                    @*<a asp-action="Delete" asp-route-id="@item.ID">Delete</a>*@
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
 }
-    </tbody>
-</table>
+
+@section scripts{
+    <script type="text/javascript">
+        $(function () {
+            $('#todo-details').on('show.bs.modal', function (event) {
+                var button = $(event.relatedTarget);
+                var id = button.data('itemid');
+                var title = button.data('title');
+                var description = button.data('description');
+                var isDone = button.data('isdone');
+                var expDate = button.data('expdate');
+
+                // Console Debug
+                //console.log(modalButton.dataset);
+                //console.log(isDone);
+                //console.log(expDate);
+
+                $('#itemID').text(id);
+                $('#itemTitle').text(title);
+                $('#itemDescription').text(description);
+                $('#itemIsDone').text(isDone);
+                $('#itemExpireDate').text(expDate);
+            });
+        });
+    </script>
+}
