@@ -9,7 +9,7 @@ namespace StickyNotesApp.Models
         public int ID { get; set; }
 
         // user ID from AspNetUser table.
-        public string OwnderID { get; set; }
+        public string OwnerID { get; set; }
 
         [Required]
         [StringLength(50, MinimumLength = 1)]

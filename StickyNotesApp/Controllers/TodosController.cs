@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using StickyNotesApp.Data;
 using StickyNotesApp.Models;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace StickyNotesApp.Controllers
 {
@@ -86,7 +83,7 @@ namespace StickyNotesApp.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ID,OwnderID,Title,Description,IsDone,ExprireDate")] Todo todo)
+        public async Task<IActionResult> Edit(int id, [Bind("ID,Title,Description,IsDone,ExpireDate")] Todo todo)
         {
             if (id != todo.ID)
             {
