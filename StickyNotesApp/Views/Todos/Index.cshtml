@@ -14,6 +14,11 @@
 
 <hr />
 
+@*
+    Iterate through the Todo model we receive from the controller and bind the current item's data
+    to data attributes so we can get the updated values.
+*@
+
 @foreach (var item in Model)
 {
     <button id="modalButton" type="button" class="btn btn-primary" data-toggle="modal" data-target="#todo-details" data-itemID="@item.ID"
@@ -52,25 +57,15 @@
                         </thead>
                         <tbody>
                             <tr>
-                                <td id="itemID">
-                                    @*@Html.DisplayFor(modelItem => item.ID)*@
-                                </td>
-                                <td id="itemTitle">
-                                    @*@Html.DisplayFor(modelItem => item.Title)*@
-                                </td>
-                                <td id="itemDescription">
-                                    @*@Html.DisplayFor(modelItem => item.Description)*@
-                                </td>
-                                <td id="itemIsDone">
-                                    @*@Html.DisplayFor(modelItem => item.IsDone)*@
-                                </td>
-                                <td id="itemExpireDate">
-                                    @*@Html.DisplayFor(modelItem => item.ExprireDate)*@
-                                </td>
+                                <td id="itemID"></td>
+                                <td id="itemTitle"></td>
+                                <td id="itemDescription"></td>
+                                <td id="itemIsDone"></td>
+                                <td id="itemExpireDate"></td>
                                 <td>
-                                    @*<a asp-action="Edit" asp-route-id="@item.ID">Edit</a>*@
+                                    <a id="editURI" @*asp-action="Edit" asp-route-id="@item.ID" *@>Edit</a>
                                     @*<a asp-action="Details" asp-route-id="@item.ID">Details</a>*@
-                                    @*<a asp-action="Delete" asp-route-id="@item.ID">Delete</a>*@
+                                    <a id="delURI" @*asp-action="Delete" asp-route-id="@item.ID" *@>Delete</a>
                                 </td>
                             </tr>
                         </tbody>
@@ -83,6 +78,8 @@
 
 @section scripts{
     <script type="text/javascript">
+        // Function to refresh and grab the matching data
+        // that is passed into the modal whenever the modal is closed.
         $(function () {
             $('#todo-details').on('show.bs.modal', function (event) {
                 var button = $(event.relatedTarget);
@@ -102,6 +99,11 @@
                 $('#itemDescription').text(description);
                 $('#itemIsDone').text(isDone);
                 $('#itemExpireDate').text(expDate);
+
+                // Set the href attribute for Edit and Delete routes
+                // with the respective id.
+                $('#editURI').attr('href', 'Todos/Edit/' + id);
+                $('#delURI').attr('href', 'Todos/Delete/' + id);
             });
         });
     </script>
