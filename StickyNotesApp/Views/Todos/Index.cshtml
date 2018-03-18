@@ -21,11 +21,25 @@
 
 @foreach (var item in Model)
 {
-    <button id="modalButton" type="button" class="btn btn-primary" data-toggle="modal" data-target="#todo-details" data-itemID="@item.ID"
-            data-title="@item.Title" data-description="@item.Description" data-isDone="@item.IsDone" data-expDate="@item.ExpireDate">
-        @Html.DisplayFor(modelItem => item.Title)
-    </button>
-
+    // Conditionally render the button based on IsDone property.
+    if (@item.IsDone)
+    {
+        <span data-toggle="tooltip" data-placement="top" title="@item.Description">
+            <button id="modalButton" type="button" class="btn btn-success" data-toggle="modal" data-target="#todo-details" data-itemID="@item.ID"
+                    data-title="@item.Title" data-description="@item.Description" data-isDone="@item.IsDone" data-expDate="@item.ExpireDate">
+                @Html.DisplayFor(modelItem => item.Title)
+            </button>
+        </span>
+    }
+    else
+    {
+        <span data-toggle="tooltip" data-placement="top" title="@item.Description">
+            <button id="modalButton" type="button" class="btn btn-warning" data-toggle="modal" data-target="#todo-details" data-itemID="@item.ID"
+                    data-title="@item.Title" data-description="@item.Description" data-isDone="@item.IsDone" data-expDate="@item.ExpireDate">
+                @Html.DisplayFor(modelItem => item.Title)
+            </button>
+        </span>
+    }
     <div class="modal fade" id="todo-details" tabindex="-1" role="dialog" aria-labelledby="todo-details-label" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
@@ -81,6 +95,10 @@
         // Function to refresh and grab the matching data
         // that is passed into the modal whenever the modal is closed.
         $(function () {
+            // Enable tooltips.
+            $('[data-toggle="tooltip"]').tooltip()
+
+            // Bind properties for modal.
             $('#todo-details').on('show.bs.modal', function (event) {
                 var button = $(event.relatedTarget);
                 var id = button.data('itemid');
