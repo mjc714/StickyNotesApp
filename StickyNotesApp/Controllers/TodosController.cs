@@ -1,8 +1,13 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Http;
 using StickyNotesApp.Data;
 using StickyNotesApp.Models;
 using System.Linq;
+using System;
 using System.Threading.Tasks;
 
 namespace StickyNotesApp.Controllers
@@ -17,7 +22,14 @@ namespace StickyNotesApp.Controllers
         }
 
         // GET: Todos
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
+        {
+            return View();
+        }
+
+        // GET: Todos
+        [Authorize]
+        public async Task<IActionResult> IndexAuth()
         {
             return View(await _context.Todos.ToListAsync());
         }
@@ -47,17 +59,36 @@ namespace StickyNotesApp.Controllers
         }
 
         // POST: Todos/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID,Title,Description,ExpireDate")] Todo todo)
+        public IActionResult Create([Bind("Title,Description")] Todo todo)
+        {
+            if (ModelState.IsValid)
+            {
+                HttpContext.Session.SetString(todo.Title, todo.Description);
+                return RedirectToAction(nameof(Index));
+            }
+            return View(todo);
+        }
+
+        // GET: Todos/CreateAuth
+        [Authorize]
+        public IActionResult CreateAuth()
+        {
+            return View();
+        }
+
+        // POST: Todos/CreateAuth
+        [Authorize]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CreateAuth([Bind("ID,OwnerID,Title,Description,ExpireDate")] Todo todo)
         {
             if (ModelState.IsValid)
             {
                 _context.Add(todo);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(IndexAuth));
             }
             return View(todo);
         }
@@ -79,8 +110,6 @@ namespace StickyNotesApp.Controllers
         }
 
         // POST: Todos/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("ID,Title,Description,IsDone,ExpireDate")] Todo todo)
@@ -113,8 +142,28 @@ namespace StickyNotesApp.Controllers
             return View(todo);
         }
 
-        // GET: Todos/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        public IActionResult Delete(string id)
+        {
+            HttpContext.Session.Remove(id);
+            return RedirectToAction(nameof(Index));
+        }
+
+        public IActionResult DeleteAll()
+        {
+            return View();
+        }
+
+        [HttpPost, ActionName("DeleteAll")]
+        [ValidateAntiForgeryToken]
+        public IActionResult DeleteAllConfirmed()
+        {
+            HttpContext.Session.Clear();
+            return RedirectToAction(nameof(Index));
+        }
+
+        // GET: Todos/DeleteAuth/5
+        [Authorize]
+        public async Task<IActionResult> DeleteAuth(int? id)
         {
             if (id == null)
             {
@@ -131,10 +180,11 @@ namespace StickyNotesApp.Controllers
             return View(todo);
         }
 
-        // POST: Todos/Delete/5
-        [HttpPost, ActionName("Delete")]
+        // POST: Todos/DeleteAuth/5
+        [Authorize]
+        [HttpPost, ActionName("DeleteAuth")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public async Task<IActionResult> DeleteConfirmedAuth(int id)
         {
             var todo = await _context.Todos.SingleOrDefaultAsync(m => m.ID == id);
             _context.Todos.Remove(todo);

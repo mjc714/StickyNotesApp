@@ -7,8 +7,17 @@
         <h1 class="display-3">Sticky Notes!</h1>
         <p></p>
         @* Button trigger create a note. *@
-        <form>
-            <button type="submit" class="btn btn-primary btn-lg" asp-controller="Todos" asp-action="Create">Create a Note!</button>
-        </form>
+        @if (!User.Identity.IsAuthenticated)
+        {
+            <form>
+                <button type="submit" class="btn btn-primary btn-lg" asp-controller="Todos" asp-action="Create">Create a Note!</button>
+            </form>
+        }
+        else
+        {
+            <form>
+                <button type="submit" class="btn btn-primary btn-lg" asp-controller="Todos" asp-action="CreateAuth">Create a Note!</button>
+            </form>
+        }
     </div>
 </div>

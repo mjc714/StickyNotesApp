@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using StickyNotesApp.Data;
 using StickyNotesApp.Models;
 using StickyNotesApp.Services;
+using System;
 
 namespace StickyNotesApp
 {
@@ -29,6 +30,13 @@ namespace StickyNotesApp
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
 
+            services.AddDistributedMemoryCache();
+
+            services.AddSession(options =>
+            {
+                options.IdleTimeout = TimeSpan.FromMinutes(120);
+                options.Cookie.HttpOnly = true;
+            });
             // Add application services.
             services.AddTransient<IEmailSender, EmailSender>();
 
@@ -50,6 +58,8 @@ namespace StickyNotesApp
             }
 
             app.UseStaticFiles();
+
+            app.UseSession();
 
             app.UseAuthentication();
 

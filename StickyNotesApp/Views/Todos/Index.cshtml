@@ -1,46 +1,34 @@
-﻿@model IEnumerable<StickyNotesApp.Models.Todo>
+﻿@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
 
 @{
     ViewData["Title"] = "Notes";
 }
 
-<h2>My Notes</h2>
+<h2>[Guest] My Notes</h2>
 
 <hr />
 
 <form>
-    <button type="submit" class="btn btn-primary btn-sm" asp-action="Create">Add Note</button>
+    <button type="submit" class="btn btn-primary" asp-action="Create">Add Note</button>
+    <button type="submit" class="btn btn-danger" asp-action="DeleteAll">Clear Todos</button>
 </form>
 
 <hr />
 
 @*
-    Iterate through the Todo model we receive from the controller and bind the current item's data
-    to data attributes so we can get the updated values.
+    Iterate through the session keys and display the Title and Description.
 *@
-
-@foreach (var item in Model)
+@foreach (var key in HttpContextAccessor.HttpContext.Session.Keys)
 {
-    // Conditionally render the button based on IsDone property.
-    if (@item.IsDone)
-    {
-        <span data-toggle="tooltip" data-placement="top" title="@item.Description">
-            <button id="modalButton" type="button" class="btn btn-success" data-toggle="modal" data-target="#todo-details" data-itemID="@item.ID"
-                    data-title="@item.Title" data-description="@item.Description" data-isDone="@item.IsDone" data-expDate="@item.ExpireDate">
-                @Html.DisplayFor(modelItem => item.Title)
-            </button>
-        </span>
-    }
-    else
-    {
-        <span data-toggle="tooltip" data-placement="top" title="@item.Description">
-            <button id="modalButton" type="button" class="btn btn-warning" data-toggle="modal" data-target="#todo-details" data-itemID="@item.ID"
-                    data-title="@item.Title" data-description="@item.Description" data-isDone="@item.IsDone" data-expDate="@item.ExpireDate">
-                @Html.DisplayFor(modelItem => item.Title)
-            </button>
-        </span>
-    }
-    <div class="modal fade" id="todo-details" tabindex="-1" role="dialog" aria-labelledby="todo-details-label" aria-hidden="true">
+    <span data-toggle="tooltip" data-placement="top" title="@HttpContextAccessor.HttpContext.Session.GetString(key)">
+        <button id="modalButton" type="button" class="btn btn-primary" data-toggle="modal" data-title="@key"
+                data-description="@HttpContextAccessor.HttpContext.Session.GetString(key)"
+                data-target="#guest-todo-details">
+            @key
+        </button>
+    </span>
+    <div class="modal fade" id="guest-todo-details" tabindex="-1" role="dialog" aria-labelledby="todo-details-label" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
@@ -52,34 +40,25 @@
                         <thead>
                             <tr>
                                 <th>
-                                    @Html.DisplayNameFor(model => model.ID)
+                                    Title
                                 </th>
                                 <th>
-                                    @Html.DisplayNameFor(model => model.Title)
+                                    Description
                                 </th>
-                                <th>
-                                    @Html.DisplayNameFor(model => model.Description)
-                                </th>
-                                <th>
-                                    @Html.DisplayNameFor(model => model.IsDone)
-                                </th>
-                                <th>
-                                    @Html.DisplayNameFor(model => model.ExpireDate)
-                                </th>
-                                <th></th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
-                                <td id="itemID"></td>
                                 <td id="itemTitle"></td>
                                 <td id="itemDescription"></td>
-                                <td id="itemIsDone"></td>
-                                <td id="itemExpireDate"></td>
                                 <td>
-                                    <a id="editURI" @*asp-action="Edit" asp-route-id="@item.ID" *@>Edit</a>
-                                    @*<a asp-action="Details" asp-route-id="@item.ID">Details</a>*@
-                                    <a id="delURI" @*asp-action="Delete" asp-route-id="@item.ID" *@>Delete</a>
+                                    <form>
+                                        <button type="submit" asp-action="Index" class="btn btn-warning">Edit</button>
+                                        <button type="submit" class="btn btn-danger"
+                                                asp-action="Delete">
+                                            Delete
+                                        </button>
+                                    </form>
                                 </td>
                             </tr>
                         </tbody>
@@ -92,36 +71,31 @@
 
 @section scripts{
     <script type="text/javascript">
-        // Function to refresh and grab the matching data
-        // that is passed into the modal whenever the modal is closed.
-        $(function () {
+        $(document).ready(function () {
             // Enable tooltips.
-            $('[data-toggle="tooltip"]').tooltip()
+            $('[data-toggle="tooltip"]').tooltip();
+
+            // Prevent multiple tooltips from showing.
+            $('#tooltipId').on('show.bs.tooltip', function () {
+                $('.tooltip').not(this).hide();
+            });
 
             // Bind properties for modal.
-            $('#todo-details').on('show.bs.modal', function (event) {
+            $('#guest-todo-details').on('show.bs.modal', function (event) {
                 var button = $(event.relatedTarget);
-                var id = button.data('itemid');
                 var title = button.data('title');
                 var description = button.data('description');
-                var isDone = button.data('isdone');
-                var expDate = button.data('expdate');
 
                 // Console Debug
                 //console.log(modalButton.dataset);
-                //console.log(isDone);
-                //console.log(expDate);
+                //console.log(title);
+                //console.log(description);
 
-                $('#itemID').text(id);
                 $('#itemTitle').text(title);
                 $('#itemDescription').text(description);
-                $('#itemIsDone').text(isDone);
-                $('#itemExpireDate').text(expDate);
 
-                // Set the href attribute for Edit and Delete routes
-                // with the respective id.
-                $('#editURI').attr('href', 'Todos/Edit/' + id);
-                $('#delURI').attr('href', 'Todos/Delete/' + id);
+                //$('#editURI').attr('href', 'Todos/EditAuth/' + id);
+                $('#delURI').attr('href', 'Todos/Delete/');
             });
         });
     </script>
