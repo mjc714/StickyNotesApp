@@ -77,9 +77,8 @@
                                 <td id="itemIsDone"></td>
                                 <td id="itemExpireDate"></td>
                                 <td>
-                                    <a id="editURI" @*asp-action="Edit" asp-route-id="@item.ID" *@>Edit</a>
-                                    @*<a asp-action="Details" asp-route-id="@item.ID">Details</a>*@
-                                    <a id="delURI" @*asp-action="Delete" asp-route-id="@item.ID" *@>Delete</a>
+                                    <a id="editURI">Edit</a>
+                                    <a id="delURI">Delete</a>
                                 </td>
                             </tr>
                         </tbody>
@@ -120,8 +119,8 @@
 
                 // Set the href attribute for Edit and Delete routes
                 // with the respective id.
-                $('#editURI').attr('href', 'Todos/EditAuth/' + id);
-                $('#delURI').attr('href', 'Todos/DeleteAuth/' + id);
+                $('#editURI').attr('href', 'EditAuth/' + id);
+                $('#delURI').attr('href', 'DeleteAuth/' + id);
             });
         });
     </script>

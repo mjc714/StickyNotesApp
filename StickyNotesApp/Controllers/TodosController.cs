@@ -31,25 +31,8 @@ namespace StickyNotesApp.Controllers
         [Authorize]
         public async Task<IActionResult> IndexAuth()
         {
-            return View(await _context.Todos.ToListAsync());
-        }
-
-        // GET: Todos/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var todo = await _context.Todos
-                .SingleOrDefaultAsync(m => m.ID == id);
-            if (todo == null)
-            {
-                return NotFound();
-            }
-
-            return View(todo);
+            // Load the notes for the currently logged in user only.
+            return View(await _context.Todos.Where(note => note.OwnerID == User.Identity.Name).ToListAsync());
         }
 
         // GET: Todos/Create
@@ -101,7 +84,7 @@ namespace StickyNotesApp.Controllers
         [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CreateAuth([Bind("ID,OwnerID,Title,Description,ExpireDate")] Todo todo)
+        public async Task<IActionResult> CreateAuth([Bind("OwnerID,Title,Description,ExpireDate")] Todo todo)
         {
             if (ModelState.IsValid)
             {
@@ -134,6 +117,7 @@ namespace StickyNotesApp.Controllers
         }
 
         // GET: Todos/EditAuth/5
+        [Authorize]
         public async Task<IActionResult> EditAuth(int? id)
         {
             if (id == null)
@@ -150,9 +134,10 @@ namespace StickyNotesApp.Controllers
         }
 
         // POST: Todos/EditAuth/5
+        [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> EditAuth(int id, [Bind("ID,Title,Description,IsDone,ExpireDate")] Todo todo)
+        public async Task<IActionResult> EditAuth(int id, [Bind("ID,OwnerID,Title,Description,IsDone,ExpireDate")] Todo todo)
         {
             if (id != todo.ID)
             {
@@ -240,7 +225,7 @@ namespace StickyNotesApp.Controllers
             var todo = await _context.Todos.SingleOrDefaultAsync(m => m.ID == id);
             _context.Todos.Remove(todo);
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(IndexAuth));
         }
 
         private bool TodoExists(int id)
