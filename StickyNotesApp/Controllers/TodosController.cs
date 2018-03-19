@@ -63,10 +63,29 @@ namespace StickyNotesApp.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Create([Bind("Title,Description")] Todo todo)
         {
+            bool check = true;
             if (ModelState.IsValid)
             {
-                HttpContext.Session.SetString(todo.Title, todo.Description);
-                return RedirectToAction(nameof(Index));
+                // Iterate through keys to check for duplicate titles.
+                foreach (var key in HttpContext.Session.Keys)
+                {
+                    if (key == todo.Title)
+                    {
+                        check = false;
+                    }
+                }
+                // If we do not have duplicate titles, perform create.
+                if (check)
+                {
+                    HttpContext.Session.SetString(todo.Title, todo.Description);
+                    return RedirectToAction(nameof(Index));
+                }
+                else
+                {
+                    // Otherwise set DupError and return view.
+                    ViewData["DupError"] = "No duplicate note titles allowed.";
+                    return View(todo);
+                }
             }
             return View(todo);
         }
@@ -93,8 +112,29 @@ namespace StickyNotesApp.Controllers
             return View(todo);
         }
 
-        // GET: Todos/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        // GET: Todos/Edit?key=
+        public IActionResult Edit(string key)
+        {
+            ViewData["Key"] = key;
+            return View();
+        }
+
+        // POST: Todos/Edit?key=
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Edit(string key, [Bind("Title, Description")]Todo todo)
+        {
+            if (ModelState.IsValid)
+            {
+                HttpContext.Session.SetString(todo.Title, todo.Description);
+                return RedirectToAction(nameof(Index));
+            }
+            //return View(todo);
+            return Content($"Hello {key}, {todo.Description}");
+        }
+
+        // GET: Todos/EditAuth/5
+        public async Task<IActionResult> EditAuth(int? id)
         {
             if (id == null)
             {
@@ -109,10 +149,10 @@ namespace StickyNotesApp.Controllers
             return View(todo);
         }
 
-        // POST: Todos/Edit/5
+        // POST: Todos/EditAuth/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ID,Title,Description,IsDone,ExpireDate")] Todo todo)
+        public async Task<IActionResult> EditAuth(int id, [Bind("ID,Title,Description,IsDone,ExpireDate")] Todo todo)
         {
             if (id != todo.ID)
             {
@@ -137,15 +177,26 @@ namespace StickyNotesApp.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(IndexAuth));
             }
             return View(todo);
         }
 
-        public IActionResult Delete(string id)
+        // GET: Todos/Delete?key=
+        public IActionResult Delete(string key)
         {
-            HttpContext.Session.Remove(id);
+            ViewData["Key"] = key;
+            return View();
+        }
+
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public IActionResult DeleteConfirmed(string key)
+        {
+            // Remove a note by looking up the session state[key]
+            HttpContext.Session.Remove(key);
             return RedirectToAction(nameof(Index));
+            //return Content($"Hello {key}");
         }
 
         public IActionResult DeleteAll()

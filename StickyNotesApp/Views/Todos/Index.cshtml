@@ -52,13 +52,8 @@
                                 <td id="itemTitle"></td>
                                 <td id="itemDescription"></td>
                                 <td>
-                                    <form>
-                                        <button type="submit" asp-action="Index" class="btn btn-warning">Edit</button>
-                                        <button type="submit" class="btn btn-danger"
-                                                asp-action="Delete">
-                                            Delete
-                                        </button>
-                                    </form>
+                                    <a id="editURI">Edit</a>
+                                    <a id="delURI">Delete</a>
                                 </td>
                             </tr>
                         </tbody>
@@ -87,15 +82,15 @@
                 var description = button.data('description');
 
                 // Console Debug
-                //console.log(modalButton.dataset);
-                //console.log(title);
-                //console.log(description);
+                console.log(modalButton.dataset);
+                console.log(title);
+                console.log(description);
 
                 $('#itemTitle').text(title);
                 $('#itemDescription').text(description);
 
-                //$('#editURI').attr('href', 'Todos/EditAuth/' + id);
-                $('#delURI').attr('href', 'Todos/Delete/');
+                $('#editURI').attr('href', 'Todos/Edit?key=' + title);
+                $('#delURI').attr('href', 'Todos/Delete?key=' + title);
             });
         });
     </script>
