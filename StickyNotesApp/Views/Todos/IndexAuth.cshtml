@@ -35,7 +35,7 @@
     }
     else if (!@item.IsDone)
     {
-        if (Convert.ToDateTime(item.ExpireDate).Date == DateTime.Now.Date)
+        if (Convert.ToDateTime(item.ExpireDate).Date <= DateTime.Now.Date)
         {
             <span data-toggle="tooltip" data-placement="top" title="@item.Description">
                 <button id="modalButton" type="button" class="btn btn-danger" data-toggle="modal" data-target="#todo-details" data-itemID="@item.ID"
