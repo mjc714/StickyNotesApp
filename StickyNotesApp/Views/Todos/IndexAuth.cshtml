@@ -75,7 +75,9 @@
                                 <td id="itemID"></td>
                                 <td id="itemTitle"></td>
                                 <td id="itemDescription"></td>
-                                <td id="itemIsDone"></td>
+                                <td id="itemIsDone">
+                                    <input id="checkbox" type="checkbox" disabled />
+                                </td>
                                 <td id="itemExpireDate"></td>
                                 <td>
                                     <a id="editURI">Edit</a>
@@ -115,7 +117,7 @@
                 $('#itemID').text(id);
                 $('#itemTitle').text(title);
                 $('#itemDescription').text(description);
-                $('#itemIsDone').text(isDone);
+                $('#checkbox').prop('checked', isDone === 'True' ? true : false);
                 $('#itemExpireDate').text(expDate);
 
                 // Set the href attribute for Edit and Delete routes
