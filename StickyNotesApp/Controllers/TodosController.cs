@@ -197,6 +197,31 @@ namespace StickyNotesApp.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        [Authorize]
+        public IActionResult DeleteAllDone()
+        {
+            return View();
+        }
+
+        [Authorize]
+        [HttpPost, ActionName("DeleteAllDone")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteAllDoneConfirmed()
+        {
+            // Find all 'done' todos of the logged in user.
+            var todos = from todo in _context.Todos
+                        where todo.OwnerID == User.Identity.Name && todo.IsDone == true
+                        select todo;
+
+            // Execute query.
+            foreach (var todo in todos)
+            {
+                _context.Todos.Remove(todo);
+            }
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(IndexAuth));
+        }
+
         // GET: Todos/DeleteAuth/5
         [Authorize]
         public async Task<IActionResult> DeleteAuth(int? id)

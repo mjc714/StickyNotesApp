@@ -1,0 +1,14 @@
+﻿
+@{
+    ViewData["Title"] = "DeleteAllDone";
+}
+
+<h2>Delete All Done Todos.</h2>
+
+<h3>Are you sure you want to delete all finished notes?</h3>
+<div>
+    <form asp-action="DeleteAllDone">
+        <input type="submit" value="Delete All" class="btn btn-danger" /> |
+        <a asp-action="IndexAuth">Back to List</a>
+    </form>
+</div>

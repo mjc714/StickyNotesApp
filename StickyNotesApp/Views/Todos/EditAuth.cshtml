@@ -36,11 +36,13 @@
             </div>
             <div class="form-group">
                 <label asp-for="ExpireDate" class="control-label"></label>
-                <input asp-for="ExpireDate" class="form-control" />
+                <input id="expDate" asp-for="ExpireDate" class="form-control" />
+                <div id="pastError" class="alert alert-danger hidden" role="alert">Cannot set date to the past.</div>
+                <div id="dateError" class="alert alert-danger hidden" role="alert">Invalid Date.</div>
                 <span asp-validation-for="ExpireDate" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-success" />
+                <input id="edit" type="submit" value="Save" class="btn btn-success" />
             </div>
         </form>
     </div>
@@ -52,4 +54,81 @@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+<script type="text/javascript">
+    $(function () {
+        var id = '#expDate';
+        var now = new Date();
+        var dateChange = $(id).val();
+
+        // Clear any time component from the date.
+        now.setHours(0, 0, 0, 0);
+
+        // Append '0' to day/month < 10.
+        var day = ("0" + now.getDate()).slice(-2);
+        var month = ("0" + (now.getMonth() + 1)).slice(-2);
+
+        // Create a date string from Date object values.
+        var today = now.getFullYear() + "-" + (month) + "-" + (day);
+
+        var parseToday = today.split('-');
+
+        console.log(parseToday);
+
+        var numYear = parseInt(parseToday[0], 10);
+        var numMonth = parseInt(parseToday[1], 10);
+        var numDate = parseInt(parseToday[2], 10);
+
+        // Set the input's value to today's date.
+        //$(id).val(today);
+
+        // Runs whenever the input date is changed.
+        $(id).change(function () {
+            // Reset the disable attribute for the submit button.
+            $('#edit').attr('disabled', false);
+            $('#dateError').addClass('hidden');
+            // Get the value from the date input.
+            dateChange = $(id).val();
+            var parseDate = dateChange.split('-');
+
+            //console.log(parseDate);
+            if (parseDate[0] === "") {
+                $('#dateError').removeClass('hidden');
+                $('#edit').attr('disabled', true);
+            }
+            var newYear = parseInt(parseDate[0], 10);
+            var newMonth = parseInt(parseDate[1], 10);
+            var newDate = parseInt(parseDate[2], 10);
+
+            if (newYear > numYear) { // guaranteed future
+                $(id).val(dateChange);
+                $('#pastError').addClass('hidden');
+            } else if (newYear < numYear) { // in the past
+                $('#pastError').removeClass('hidden');
+                $('#edit').attr('disabled', true);
+            } else if (newYear === numYear) { // same year
+                // Check Month
+                if (newMonth > numMonth) { // future
+                    $(id).val(dateChange);
+                    $('#pastError').addClass('hidden');
+                } else if (newMonth < numMonth) { // in the past
+                    $('#pastError').removeClass('hidden');
+                    $('#edit').attr('disabled', true);
+                } else if (newMonth === numMonth) { // same timeline
+                    // Check Date
+                    if (newDate > numDate) {
+                        $(id).val(dateChange);
+                        $('#pastError').addClass('hidden');
+                    } else if (newDate === numDate) {
+                        $(id).val(dateChange);
+                        $('#pastError').addClass('hidden');
+                    } else if (newDate < numDate) {
+                        $('#pastError').removeClass('hidden');
+                        $('#edit').attr('disabled', true);
+                    }
+                }
+            }
+        });
+    });
+</script>
 }
