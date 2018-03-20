@@ -1,4 +1,5 @@
 ﻿@model IEnumerable<StickyNotesApp.Models.Todo>
+@using System;
 
 @{
     ViewData["Title"] = "Notes";
@@ -32,14 +33,26 @@
             </button>
         </span>
     }
-    else
+    else if (!@item.IsDone)
     {
-        <span data-toggle="tooltip" data-placement="top" title="@item.Description">
-            <button id="modalButton" type="button" class="btn btn-warning" data-toggle="modal" data-target="#todo-details" data-itemID="@item.ID"
-                    data-title="@item.Title" data-description="@item.Description" data-isDone="@item.IsDone" data-expDate="@item.ExpireDate">
-                @Html.DisplayFor(modelItem => item.Title)
-            </button>
-        </span>
+        if (Convert.ToDateTime(item.ExpireDate).Date == DateTime.Now.Date)
+        {
+            <span data-toggle="tooltip" data-placement="top" title="@item.Description">
+                <button id="modalButton" type="button" class="btn btn-danger" data-toggle="modal" data-target="#todo-details" data-itemID="@item.ID"
+                        data-title="@item.Title" data-description="@item.Description" data-isDone="@item.IsDone" data-expDate="@item.ExpireDate">
+                    @Html.DisplayFor(modelItem => item.Title)
+                </button>
+            </span>
+        }
+        else
+        {
+            <span data-toggle="tooltip" data-placement="top" title="@item.Description">
+                <button id="modalButton" type="button" class="btn btn-warning" data-toggle="modal" data-target="#todo-details" data-itemID="@item.ID"
+                        data-title="@item.Title" data-description="@item.Description" data-isDone="@item.IsDone" data-expDate="@item.ExpireDate">
+                    @Html.DisplayFor(modelItem => item.Title)
+                </button>
+            </span>
+        }
     }
     <div class="modal fade" id="todo-details" tabindex="-1" role="dialog" aria-labelledby="todo-details-label" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
