@@ -26,6 +26,7 @@ namespace StickyNotesApp
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
+            // Add Identity.
             services.AddIdentity<ApplicationUser, IdentityRole>(config =>
             {
                 config.SignIn.RequireConfirmedEmail = true;
@@ -33,6 +34,7 @@ namespace StickyNotesApp
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
 
+            // Configure Identity.
             services.Configure<IdentityOptions>(options =>
             {
                 // Password settings
@@ -66,6 +68,7 @@ namespace StickyNotesApp
                 options.SlidingExpiration = true;
             });
 
+            // Use sessions for unregistered users.
             services.AddDistributedMemoryCache();
 
             services.AddSession(options =>
@@ -74,6 +77,7 @@ namespace StickyNotesApp
                 options.Cookie.HttpOnly = true;
             });
 
+            // Add Google auth credentials.
             services.AddAuthentication().AddGoogle(googleOptions =>
             {
                 googleOptions.ClientId = Configuration["Authentication:Google:ClientId"];

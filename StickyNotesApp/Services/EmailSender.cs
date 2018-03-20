@@ -9,6 +9,7 @@ namespace StickyNotesApp.Services
     // For more details see https://go.microsoft.com/fwlink/?LinkID=532713
     public class EmailSender : IEmailSender
     {
+        // Load credentials.
         public EmailSender(IOptions<AuthMessageSenderOptions> optionsAccessor)
         {
             Options = optionsAccessor.Value;
@@ -24,6 +25,8 @@ namespace StickyNotesApp.Services
         public Task Execute(string apiKey, string subject, string message, string email)
         {
             var client = new SendGridClient(apiKey);
+
+            // Construct email message.
             var msg = new SendGridMessage()
             {
                 From = new EmailAddress("chin.matthew1212@gmail.com", "matthew"),

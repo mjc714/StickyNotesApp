@@ -1,13 +1,10 @@
-﻿using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Http;
 using StickyNotesApp.Data;
 using StickyNotesApp.Models;
 using System.Linq;
-using System;
 using System.Threading.Tasks;
 
 namespace StickyNotesApp.Controllers
@@ -27,7 +24,7 @@ namespace StickyNotesApp.Controllers
             return View();
         }
 
-        // GET: Todos
+        // GET: Todos of logged in user.
         [Authorize]
         public async Task<IActionResult> IndexAuth()
         {
@@ -88,6 +85,7 @@ namespace StickyNotesApp.Controllers
         {
             if (ModelState.IsValid)
             {
+                // Add the todo with bound properties to db context.
                 _context.Add(todo);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(IndexAuth));
@@ -109,11 +107,12 @@ namespace StickyNotesApp.Controllers
         {
             if (ModelState.IsValid)
             {
+                // Save the todo title: description mapping to session.
                 HttpContext.Session.SetString(todo.Title, todo.Description);
                 return RedirectToAction(nameof(Index));
             }
-            //return View(todo);
-            return Content($"Hello {key}, {todo.Description}");
+            return View(todo);
+            //return Content($"Hello {key}, {todo.Description}");
         }
 
         // GET: Todos/EditAuth/5
