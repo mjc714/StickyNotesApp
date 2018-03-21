@@ -112,7 +112,6 @@ namespace StickyNotesApp.Controllers
                 return RedirectToAction(nameof(Index));
             }
             return View(todo);
-            //return Content($"Hello {key}, {todo.Description}");
         }
 
         // GET: Todos/EditAuth/5
@@ -124,7 +123,8 @@ namespace StickyNotesApp.Controllers
                 return NotFound();
             }
 
-            var todo = await _context.Todos.SingleOrDefaultAsync(m => m.ID == id);
+            // Query for a note with matching id and owner.
+            var todo = await _context.Todos.SingleOrDefaultAsync(m => m.ID == id && m.OwnerID == User.Identity.Name);
             if (todo == null)
             {
                 return NotFound();
@@ -166,7 +166,7 @@ namespace StickyNotesApp.Controllers
             return View(todo);
         }
 
-        // GET: Todos/Delete?key=
+        // GET: Todos/Delete
         public IActionResult Delete(string key)
         {
             ViewData["Key"] = key;
@@ -180,7 +180,6 @@ namespace StickyNotesApp.Controllers
             // Remove a note by looking up the session state[key]
             HttpContext.Session.Remove(key);
             return RedirectToAction(nameof(Index));
-            //return Content($"Hello {key}");
         }
 
         public IActionResult DeleteAll()
@@ -230,13 +229,13 @@ namespace StickyNotesApp.Controllers
                 return NotFound();
             }
 
+            // Query for a note with matching id and owner.
             var todo = await _context.Todos
-                .SingleOrDefaultAsync(m => m.ID == id);
+                .SingleOrDefaultAsync(m => m.ID == id && m.OwnerID == User.Identity.Name);
             if (todo == null)
             {
                 return NotFound();
             }
-
             return View(todo);
         }
 

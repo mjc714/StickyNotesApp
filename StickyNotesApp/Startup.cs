@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -110,6 +111,21 @@ namespace StickyNotesApp
             app.UseSession();
 
             app.UseAuthentication();
+
+            app.UseStatusCodePages(async context =>
+            {
+                context.HttpContext.Response.ContentType = "text/plain";
+                //if(context.HttpContext.Response.StatusCode == 404)
+                //{
+                //    await context.HttpContext.Response.WriteAsync(
+                //        "Error 404."
+                //        );
+                //}
+                await context.HttpContext.Response.WriteAsync(
+                    "Status code page, status code: " +
+                    context.HttpContext.Response.StatusCode
+                    );
+            });
 
             app.UseMvc(routes =>
             {
