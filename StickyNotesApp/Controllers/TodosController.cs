@@ -54,10 +54,16 @@ namespace StickyNotesApp.Controllers
                         check = false;
                     }
                 }
+
                 // If we do not have duplicate titles, perform create.
-                if (check)
+                if (check && todo.Description != null)
                 {
                     HttpContext.Session.SetString(todo.Title, todo.Description);
+                    return RedirectToAction(nameof(Index));
+                }
+                else if (check && todo.Description == null)
+                {
+                    HttpContext.Session.SetString(todo.Title, "");
                     return RedirectToAction(nameof(Index));
                 }
                 else

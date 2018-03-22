@@ -81,8 +81,10 @@ namespace StickyNotesApp
             // Add Google auth credentials.
             services.AddAuthentication().AddGoogle(googleOptions =>
             {
-                googleOptions.ClientId = Configuration["Authentication:Google:ClientId"];
-                googleOptions.ClientSecret = Configuration["Authentication:Google:ClientSecret"];
+                //googleOptions.ClientId = Configuration["Authentication:Google:ClientId"];
+                //googleOptions.ClientSecret = Configuration["Authentication:Google:ClientSecret"];
+                googleOptions.ClientId = "204152545367-0b5vchurf1m28iiao5uv8ondofaaodti.apps.googleusercontent.com";
+                googleOptions.ClientSecret = "4ZzPC8CAuK3f1zstoeWjdemD";
             });
 
             // Add application services.
